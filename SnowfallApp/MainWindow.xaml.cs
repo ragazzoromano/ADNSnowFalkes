@@ -13,6 +13,8 @@ namespace SnowfallApp;
 
 public partial class MainWindow : Window
 {
+    private static readonly SolidColorBrush SnowBrush = CreateSnowBrush();
+
     private readonly SnowfallSettings _settings;
     private readonly List<Snowflake> _flakes = new();
     private readonly Dictionary<Snowflake, Ellipse> _visualLookup = new();
@@ -27,6 +29,13 @@ public partial class MainWindow : Window
         _settings.PropertyChanged += (_, __) => RefreshFlakes();
         Loaded += OnLoaded;
         SizeChanged += (_, __) => RefreshFlakes();
+    }
+
+    private static SolidColorBrush CreateSnowBrush()
+    {
+        var brush = new SolidColorBrush(Color.FromRgb(240, 244, 255));
+        brush.Freeze();
+        return brush;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -153,7 +162,7 @@ public partial class MainWindow : Window
             IsBokeh = isBokeh,
             X = _random.NextDouble() * Math.Max(1, width),
             Y = initial ? _random.NextDouble() * Math.Max(1, height) : -radiusMax,
-            Brush = new SolidColorBrush(Color.FromRgb(240, 244, 255))
+            Brush = SnowBrush
         };
     }
 
@@ -177,7 +186,10 @@ public partial class MainWindow : Window
 
         if (flake.BlurRadius > 0.2)
         {
-            ellipse.Effect = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Quality };
+            var blur = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Quality };
+            blur.Freeze();
+            ellipse.CacheMode = new BitmapCache();
+            ellipse.Effect = blur;
         }
 
         UpdateVisual(flake, ellipse);
