@@ -1,7 +1,7 @@
 <Window x:Class="SnowfallApp.ControlWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Snowfall Controls" Height="400" Width="380"
+        Title="Snowfall Controls" Height="400" Width="425"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
     <Grid Margin="16">
