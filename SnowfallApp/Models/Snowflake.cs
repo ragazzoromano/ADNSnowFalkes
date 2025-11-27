@@ -1,4 +1,5 @@
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace SnowfallApp.Models;
 
@@ -23,4 +24,5 @@ public class Snowflake
     public double Opacity { get; init; }
     public bool IsBokeh { get; init; }
     public Brush Brush { get; init; } = Brushes.White;
+    public Ellipse? Visual { get; set; }
 }
