@@ -13,7 +13,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
@@ -59,5 +61,7 @@
             <Slider Minimum="0.4" Maximum="2.5" Width="220" Value="{Binding LargeSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="{Binding LargeSpeed, StringFormat=F1}" Margin="8 0 0 0" Width="40" HorizontalAlignment="Right"/>
         </StackPanel>
+        <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+
     </Grid>
 </Window>

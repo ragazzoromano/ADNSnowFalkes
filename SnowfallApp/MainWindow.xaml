@@ -7,8 +7,5 @@
         MouseDoubleClick="OnMouseDoubleClick">
     <Grid Background="Black">
         <Canvas x:Name="SnowCanvas" SnapsToDevicePixels="True"/>
-        <TextBlock Text="Double click for fullscreen" Foreground="#55FFFFFF" FontSize="14"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                   Margin="0 0 12 8"/>
     </Grid>
 </Window>
