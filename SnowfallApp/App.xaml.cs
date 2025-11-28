@@ -5,6 +5,14 @@ namespace SnowfallApp;
 
 public partial class App : Application
 {
+    public static bool IsShuttingDown { get; private set; }
+
+    public static void ShutdownApplication()
+    {
+        IsShuttingDown = true;
+        Current.Shutdown();
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);

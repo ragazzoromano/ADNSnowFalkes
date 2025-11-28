@@ -26,6 +26,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
@@ -124,6 +125,10 @@
             <Button x:Name="StopButton" Content="Stop" Width="100" Click="OnStopClick"/>
         </StackPanel>
         <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="19" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+
+        <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Quit" Width="100" Click="OnQuitClick"/>
+        </StackPanel>
 
     </Grid>
 </Window>
