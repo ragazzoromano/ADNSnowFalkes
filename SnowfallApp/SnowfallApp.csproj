@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <PackageIcon>snowflake_128.png</PackageIcon>
     <ApplicationIcon>ADNsnowflake.ico</ApplicationIcon>
+    <StartupObject>SnowfallApp.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
@@ -20,10 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="ADNsnowflake.ico">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="snowflake_128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Snowfall Controls" Height="620" Width="450"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner" 
         ResizeMode="NoResize">
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -26,6 +26,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -124,10 +125,10 @@
             <Button x:Name="PauseResumeButton" Content="Pause" Width="110" Margin="0 0 12 0" Click="OnPauseResumeClick"/>
             <Button x:Name="StopButton" Content="Stop" Width="100" Click="OnStopClick"/>
         </StackPanel>
-        <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="19" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+        <Label Content="Double click on the snowflakes window to toggle fullscreen mode" Grid.Row="19" Grid.ColumnSpan="2" HorizontalContentAlignment="Center"/>
 
-        <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Quit" Width="100" Click="OnQuitClick"/>
+        <StackPanel Grid.Row="21" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Quit" Width="200" Click="OnQuitClick"/>
         </StackPanel>
 
     </Grid>
