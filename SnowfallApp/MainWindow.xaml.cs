@@ -17,6 +17,10 @@ public partial class MainWindow : Window
     private bool _isAnimating;
     private bool _isFullscreen;
 
+    public event EventHandler? AnimationStateChanged;
+    public bool IsAnimating => _isAnimating;
+    public bool HasFlakes => _flakes.Count > 0;
+
     public MainWindow(SnowfallSettings settings)
     {
         InitializeComponent();
@@ -25,6 +29,8 @@ public partial class MainWindow : Window
         Loaded += OnLoaded;
         SizeChanged += (_, __) => RefreshFlakes();
     }
+
+    private void NotifyAnimationStateChanged() => AnimationStateChanged?.Invoke(this, EventArgs.Empty);
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -36,6 +42,7 @@ public partial class MainWindow : Window
     {
         if (_isAnimating)
         {
+            NotifyAnimationStateChanged();
             return;
         }
 
@@ -47,17 +54,20 @@ public partial class MainWindow : Window
         _lastUpdate = DateTime.Now;
         CompositionTarget.Rendering += OnRendering;
         _isAnimating = true;
+        NotifyAnimationStateChanged();
     }
 
     public void PauseAnimation()
     {
         if (!_isAnimating)
         {
+            NotifyAnimationStateChanged();
             return;
         }
 
         CompositionTarget.Rendering -= OnRendering;
         _isAnimating = false;
+        NotifyAnimationStateChanged();
     }
 
     public void StopAnimation()
@@ -124,9 +134,33 @@ public partial class MainWindow : Window
         var width = SnowCanvas.ActualWidth <= 0 ? ActualWidth : SnowCanvas.ActualWidth;
         var height = SnowCanvas.ActualHeight <= 0 ? ActualHeight : SnowCanvas.ActualHeight;
 
-        AdjustCount(SnowflakeSize.Small, _settings.SmallCount, initial, width, height);
-        AdjustCount(SnowflakeSize.Medium, _settings.MediumCount, initial, width, height);
-        AdjustCount(SnowflakeSize.Large, _settings.LargeCount, initial, width, height);
+        AdjustCount(
+            SnowflakeSize.Small,
+            _settings.SmallCount,
+            _settings.SmallBlurCount,
+            _settings.SmallSizeScale,
+            _settings.BlurIntensity,
+            initial,
+            width,
+            height);
+        AdjustCount(
+            SnowflakeSize.Medium,
+            _settings.MediumCount,
+            _settings.MediumBlurCount,
+            _settings.MediumSizeScale,
+            _settings.BlurIntensity,
+            initial,
+            width,
+            height);
+        AdjustCount(
+            SnowflakeSize.Large,
+            _settings.LargeCount,
+            _settings.LargeBlurCount,
+            _settings.LargeSizeScale,
+            _settings.BlurIntensity,
+            initial,
+            width,
+            height);
 
         UpdateSpeeds();
     }
@@ -139,12 +173,20 @@ public partial class MainWindow : Window
         }
     }
 
-    private void AdjustCount(SnowflakeSize size, int target, bool initial, double width, double height)
+    private void AdjustCount(
+        SnowflakeSize size,
+        int targetCount,
+        int targetBlurCount,
+        double sizeScale,
+        double blurIntensity,
+        bool initial,
+        double width,
+        double height)
     {
-        var existing = _flakes.Where(f => f.SizeCategory == size).ToList();
-        if (existing.Count > target)
+        var sizeFlakes = _flakes.Where(f => f.SizeCategory == size).ToList();
+        if (sizeFlakes.Count > targetCount)
         {
-            var toRemove = existing.Skip(target).ToList();
+            var toRemove = sizeFlakes.Skip(targetCount).ToList();
             foreach (var flake in toRemove)
             {
                 if (flake.Visual is not null)
@@ -154,21 +196,103 @@ public partial class MainWindow : Window
 
                 _flakes.Remove(flake);
             }
+
+            sizeFlakes = _flakes.Where(f => f.SizeCategory == size).ToList();
         }
-        else if (existing.Count < target)
+        else if (sizeFlakes.Count < targetCount)
         {
-            var addCount = target - existing.Count;
+            var addCount = targetCount - sizeFlakes.Count;
+            var blurredCount = sizeFlakes.Count(f => f.IsBokeh);
             for (var i = 0; i < addCount; i++)
             {
-                var flake = SnowflakeFactory.CreateSnowflake(size, initial, width, height, BaseSpeedFor(size, _settings));
+                var shouldBlur = blurredCount < targetBlurCount;
+                var flake = SnowflakeFactory.CreateSnowflake(
+                    size,
+                    initial,
+                    width,
+                    height,
+                    BaseSpeedFor(size, _settings),
+                    sizeScale,
+                    shouldBlur,
+                    blurIntensity);
+
                 _flakes.Add(flake);
+                sizeFlakes.Add(flake);
+                if (flake.IsBokeh)
+                {
+                    blurredCount++;
+                }
+
                 flake.Visual = SnowflakeFactory.CreateVisual(flake);
                 SnowCanvas.Children.Add(flake.Visual);
                 UpdateVisual(flake);
             }
         }
+
+        BalanceBlurForSize(sizeFlakes, targetBlurCount, sizeScale, blurIntensity);
     }
     
+    private void BalanceBlurForSize(
+        List<Snowflake> flakes,
+        int targetBlurCount,
+        double sizeScale,
+        double blurIntensity)
+    {
+        if (flakes.Count == 0)
+        {
+            return;
+        }
+
+        var blurred = flakes.Where(f => f.IsBokeh).ToList();
+        var sharp = flakes.Where(f => !f.IsBokeh).ToList();
+
+        if (blurred.Count > targetBlurCount)
+        {
+            foreach (var flake in blurred.Skip(targetBlurCount))
+            {
+                SetBlurState(flake, isBokeh: false, blurIntensity);
+            }
+        }
+        else if (blurred.Count < targetBlurCount)
+        {
+            foreach (var flake in sharp.Take(targetBlurCount - blurred.Count))
+            {
+                SetBlurState(flake, isBokeh: true, blurIntensity);
+            }
+        }
+
+        foreach (var flake in flakes)
+        {
+            ApplyAppearance(flake, sizeScale, blurIntensity);
+        }
+    }
+
+    private void SetBlurState(Snowflake flake, bool isBokeh, double blurIntensity)
+    {
+        flake.IsBokeh = isBokeh;
+        if (isBokeh)
+        {
+            flake.BaseBlurRadius = 2 + (SnowflakeFactory.Random.NextDouble() * 6);
+            flake.Opacity = 0.25 + (SnowflakeFactory.Random.NextDouble() * 0.35);
+        }
+        else
+        {
+            flake.BaseBlurRadius = SnowflakeFactory.Random.NextDouble() * 0.5;
+            flake.Opacity = 0.6 + (SnowflakeFactory.Random.NextDouble() * 0.35);
+        }
+
+        flake.BlurRadius = isBokeh ? flake.BaseBlurRadius * blurIntensity : flake.BaseBlurRadius;
+    }
+
+    private void ApplyAppearance(Snowflake flake, double sizeScale, double blurIntensity)
+    {
+        flake.Radius = flake.BaseRadius * sizeScale;
+        flake.BlurRadius = flake.IsBokeh ? flake.BaseBlurRadius * blurIntensity : flake.BaseBlurRadius;
+
+        SnowflakeFactory.ApplyVisualProperties(flake);
+        UpdateVisual(flake);
+    }
+
     private static double BaseSpeedFor(SnowflakeSize size, SnowfallSettings settings) => size switch
     {
         SnowflakeSize.Small => 55 * settings.SmallSpeed,
@@ -178,7 +302,7 @@ public partial class MainWindow : Window
 
     private static void UpdateVisual(Snowflake flake)
     {
-        if (flake.Visual is not { } ellipse)
+        if (flake.Visual is null)
         {
             return;
         }

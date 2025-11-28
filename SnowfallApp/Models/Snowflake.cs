@@ -13,16 +13,18 @@ public enum SnowflakeSize
 public class Snowflake
 {
     public SnowflakeSize SizeCategory { get; init; }
+    public double BaseRadius { get; init; }
     public double X { get; set; }
     public double Y { get; set; }
-    public double Radius { get; init; }
+    public double Radius { get; set; }
     public double SpeedFactor { get; init; }
     public double Speed { get; set; }
     public double Drift { get; init; }
     public double Phase { get; init; }
-    public double BlurRadius { get; init; }
-    public double Opacity { get; init; }
-    public bool IsBokeh { get; init; }
+    public double BaseBlurRadius { get; set; }
+    public double BlurRadius { get; set; }
+    public double Opacity { get; set; }
+    public bool IsBokeh { get; set; }
     public Brush Brush { get; init; } = Brushes.White;
     public TranslateTransform Transform { get; init; } = new();
     public Ellipse? Visual { get; set; }
