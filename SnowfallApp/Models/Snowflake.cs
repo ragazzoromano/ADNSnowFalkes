@@ -24,5 +24,6 @@ public class Snowflake
     public double Opacity { get; init; }
     public bool IsBokeh { get; init; }
     public Brush Brush { get; init; } = Brushes.White;
+    public TranslateTransform Transform { get; init; } = new();
     public Ellipse? Visual { get; set; }
 }

@@ -37,8 +37,18 @@ public partial class MainWindow : Window
         var deltaSeconds = (now - _lastUpdate).TotalSeconds;
         _lastUpdate = now;
 
+        if (deltaSeconds <= 0)
+        {
+            return;
+        }
+
         var width = SnowCanvas.ActualWidth <= 0 ? ActualWidth : SnowCanvas.ActualWidth;
         var height = SnowCanvas.ActualHeight <= 0 ? ActualHeight : SnowCanvas.ActualHeight;
+
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
 
         foreach (var flake in _flakes)
         {
@@ -114,6 +124,7 @@ public partial class MainWindow : Window
                 _flakes.Add(flake);
                 flake.Visual = SnowflakeFactory.CreateVisual(flake);
                 SnowCanvas.Children.Add(flake.Visual);
+                UpdateVisual(flake);
             }
         }
     }
@@ -132,8 +143,8 @@ public partial class MainWindow : Window
             return;
         }
 
-        Canvas.SetLeft(ellipse, flake.X - flake.Radius);
-        Canvas.SetTop(ellipse, flake.Y - flake.Radius);
+        flake.Transform.X = flake.X - flake.Radius;
+        flake.Transform.Y = flake.Y - flake.Radius;
     }
 
     private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
