@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -117,12 +118,12 @@
             <TextBlock Text="{Binding BlurIntensity, StringFormat=F2}" Margin="8 0 0 0" Width="40" HorizontalAlignment="Right"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 16 0 16">
+        <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 16 0 16">
             <Button x:Name="StartButton" Content="Start" Width="100" Margin="0 0 12 0" Click="OnStartClick"/>
             <Button x:Name="PauseResumeButton" Content="Pause" Width="110" Margin="0 0 12 0" Click="OnPauseResumeClick"/>
             <Button x:Name="StopButton" Content="Stop" Width="100" Click="OnStopClick"/>
         </StackPanel>
-        <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="18" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+        <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="19" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
 
     </Grid>
 </Window>
