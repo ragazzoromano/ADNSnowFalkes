@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Windows;
 using SnowfallApp.Models;
 
@@ -12,6 +13,7 @@ public partial class ControlWindow : Window
         DataContext = settings;
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+        Closing += OnClosing;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -78,6 +80,19 @@ public partial class ControlWindow : Window
         if (Owner is MainWindow mainWindow)
         {
             mainWindow.StopAnimation();
+        }
+    }
+
+    private void OnQuitClick(object sender, RoutedEventArgs e)
+    {
+        App.ShutdownApplication();
+    }
+
+    private void OnClosing(object? sender, CancelEventArgs e)
+    {
+        if (!App.IsShuttingDown)
+        {
+            e.Cancel = true;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,6 +29,7 @@ public partial class MainWindow : Window
         _settings.PropertyChanged += (_, __) => RefreshFlakes();
         Loaded += OnLoaded;
         SizeChanged += (_, __) => RefreshFlakes();
+        Closing += OnClosing;
     }
 
     private void NotifyAnimationStateChanged() => AnimationStateChanged?.Invoke(this, EventArgs.Empty);
@@ -325,6 +327,14 @@ public partial class MainWindow : Window
             Topmost = false;
             WindowStyle = WindowStyle.SingleBorderWindow;
             WindowState = WindowState.Normal;
+        }
+    }
+
+    private void OnClosing(object? sender, CancelEventArgs e)
+    {
+        if (!App.IsShuttingDown)
+        {
+            e.Cancel = true;
         }
     }
 }
