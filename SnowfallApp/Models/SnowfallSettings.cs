@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -13,22 +14,50 @@ public class SnowfallSettings : INotifyPropertyChanged
     private double _mediumSpeed = 1.2;
     private double _largeSpeed = 1.6;
 
+    private double _smallSizeScale = 1.0;
+    private double _mediumSizeScale = 1.0;
+    private double _largeSizeScale = 1.0;
+
+    private int _smallBlurCount = 60;
+    private int _mediumBlurCount = 40;
+    private int _largeBlurCount = 30;
+
+    private double _blurIntensity = 1.0;
+
     public int SmallCount
     {
         get => _smallCount;
-        set => SetField(ref _smallCount, value);
+        set
+        {
+            if (SetField(ref _smallCount, value))
+            {
+                SmallBlurCount = ClampBlur(SmallBlurCount, _smallCount);
+            }
+        }
     }
 
     public int MediumCount
     {
         get => _mediumCount;
-        set => SetField(ref _mediumCount, value);
+        set
+        {
+            if (SetField(ref _mediumCount, value))
+            {
+                MediumBlurCount = ClampBlur(MediumBlurCount, _mediumCount);
+            }
+        }
     }
 
     public int LargeCount
     {
         get => _largeCount;
-        set => SetField(ref _largeCount, value);
+        set
+        {
+            if (SetField(ref _largeCount, value))
+            {
+                LargeBlurCount = ClampBlur(LargeBlurCount, _largeCount);
+            }
+        }
     }
 
     public double SmallSpeed
@@ -49,6 +78,48 @@ public class SnowfallSettings : INotifyPropertyChanged
         set => SetField(ref _largeSpeed, value);
     }
 
+    public double SmallSizeScale
+    {
+        get => _smallSizeScale;
+        set => SetField(ref _smallSizeScale, value);
+    }
+
+    public double MediumSizeScale
+    {
+        get => _mediumSizeScale;
+        set => SetField(ref _mediumSizeScale, value);
+    }
+
+    public double LargeSizeScale
+    {
+        get => _largeSizeScale;
+        set => SetField(ref _largeSizeScale, value);
+    }
+
+    public int SmallBlurCount
+    {
+        get => _smallBlurCount;
+        set => SetField(ref _smallBlurCount, ClampBlur(value, _smallCount));
+    }
+
+    public int MediumBlurCount
+    {
+        get => _mediumBlurCount;
+        set => SetField(ref _mediumBlurCount, ClampBlur(value, _mediumCount));
+    }
+
+    public int LargeBlurCount
+    {
+        get => _largeBlurCount;
+        set => SetField(ref _largeBlurCount, ClampBlur(value, _largeCount));
+    }
+
+    public double BlurIntensity
+    {
+        get => _blurIntensity;
+        set => SetField(ref _blurIntensity, value);
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
@@ -65,4 +136,6 @@ public class SnowfallSettings : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+
+    private static int ClampBlur(int value, int maxCount) => Math.Max(0, Math.Min(value, maxCount));
 }

@@ -23,7 +23,10 @@ public static class SnowflakeFactory
         bool initial,
         double width,
         double height,
-        double baseSpeed)
+        double baseSpeed,
+        double sizeScale,
+        bool isBokeh,
+        double blurIntensity)
     {
         var (radiusMin, radiusMax) = size switch
         {
@@ -33,20 +36,21 @@ public static class SnowflakeFactory
         };
 
         var speedFactor = 0.8 + (Random.NextDouble() * 0.4);
-        var blurChance = size == SnowflakeSize.Large ? 0.5 : 0.35;
-        var isBokeh = Random.NextDouble() < blurChance;
-        var blurRadius = isBokeh ? 2 + (Random.NextDouble() * 6) : Random.NextDouble() * 0.5;
+        var baseRadius = radiusMin + (Random.NextDouble() * (radiusMax - radiusMin));
+        var baseBlurRadius = isBokeh ? 2 + (Random.NextDouble() * 6) : Random.NextDouble() * 0.5;
         var opacity = isBokeh ? 0.25 + (Random.NextDouble() * 0.35) : 0.6 + (Random.NextDouble() * 0.35);
 
         return new Snowflake
         {
             SizeCategory = size,
-            Radius = radiusMin + (Random.NextDouble() * (radiusMax - radiusMin)),
+            BaseRadius = baseRadius,
+            Radius = baseRadius * sizeScale,
             Drift = 15 + (Random.NextDouble() * 28),
             Phase = Random.NextDouble() * Math.PI * 2,
             SpeedFactor = speedFactor,
             Speed = baseSpeed * speedFactor,
-            BlurRadius = blurRadius,
+            BaseBlurRadius = baseBlurRadius,
+            BlurRadius = isBokeh ? baseBlurRadius * blurIntensity : baseBlurRadius,
             Opacity = opacity,
             IsBokeh = isBokeh,
             X = Random.NextDouble() * Math.Max(1, width),
@@ -59,16 +63,34 @@ public static class SnowflakeFactory
     {
         var ellipse = new Ellipse
         {
-            Width = flake.Radius * 2,
-            Height = flake.Radius * 2,
-            Fill = flake.Brush,
-            Opacity = flake.Opacity,
             SnapsToDevicePixels = true,
             RenderTransform = flake.Transform,
             RenderTransformOrigin = new Point(0.5, 0.5)
         };
 
-        if (flake.BlurRadius > 0.2)
+        ApplyVisualProperties(flake, ellipse);
+
+        return ellipse;
+    }
+
+    public static void ApplyVisualProperties(Snowflake flake)
+    {
+        if (flake.Visual is not { } ellipse)
+        {
+            return;
+        }
+
+        ApplyVisualProperties(flake, ellipse);
+    }
+
+    private static void ApplyVisualProperties(Snowflake flake, Ellipse ellipse)
+    {
+        ellipse.Width = flake.Radius * 2;
+        ellipse.Height = flake.Radius * 2;
+        ellipse.Fill = flake.Brush;
+        ellipse.Opacity = flake.Opacity;
+
+        if (flake.IsBokeh && flake.BlurRadius > 0.2)
         {
             var blur = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Performance };
             blur.Freeze();
@@ -78,8 +100,7 @@ public static class SnowflakeFactory
         else
         {
             ellipse.CacheMode = new BitmapCache();
+            ellipse.Effect = null;
         }
-
-        return ellipse;
     }
 }

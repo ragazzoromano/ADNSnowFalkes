@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using SnowfallApp.Models;
 
@@ -9,6 +10,44 @@ public partial class ControlWindow : Window
     {
         InitializeComponent();
         DataContext = settings;
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (Owner is MainWindow mainWindow)
+        {
+            mainWindow.AnimationStateChanged += OnAnimationStateChanged;
+            UpdateButtons(mainWindow);
+        }
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (Owner is MainWindow mainWindow)
+        {
+            mainWindow.AnimationStateChanged -= OnAnimationStateChanged;
+        }
+    }
+
+    private void OnAnimationStateChanged(object? sender, EventArgs e)
+    {
+        if (sender is MainWindow mainWindow)
+        {
+            Dispatcher.Invoke(() => UpdateButtons(mainWindow));
+        }
+    }
+
+    private void UpdateButtons(MainWindow mainWindow)
+    {
+        var hasFlakes = mainWindow.HasFlakes;
+        var isAnimating = mainWindow.IsAnimating;
+
+        StartButton.IsEnabled = !hasFlakes;
+        PauseResumeButton.Content = isAnimating ? "Pause" : "Resume";
+        PauseResumeButton.IsEnabled = hasFlakes;
+        StopButton.IsEnabled = hasFlakes;
     }
 
     private void OnStartClick(object sender, RoutedEventArgs e)
@@ -19,11 +58,18 @@ public partial class ControlWindow : Window
         }
     }
 
-    private void OnPauseClick(object sender, RoutedEventArgs e)
+    private void OnPauseResumeClick(object sender, RoutedEventArgs e)
     {
         if (Owner is MainWindow mainWindow)
         {
-            mainWindow.PauseAnimation();
+            if (mainWindow.IsAnimating)
+            {
+                mainWindow.PauseAnimation();
+            }
+            else
+            {
+                mainWindow.StartAnimation();
+            }
         }
     }
 
