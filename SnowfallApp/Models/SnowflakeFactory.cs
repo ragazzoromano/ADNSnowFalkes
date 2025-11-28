@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
@@ -62,15 +63,21 @@ public static class SnowflakeFactory
             Height = flake.Radius * 2,
             Fill = flake.Brush,
             Opacity = flake.Opacity,
-            SnapsToDevicePixels = true
+            SnapsToDevicePixels = true,
+            RenderTransform = flake.Transform,
+            RenderTransformOrigin = new Point(0.5, 0.5)
         };
 
         if (flake.BlurRadius > 0.2)
         {
-            var blur = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Quality };
+            var blur = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Performance };
             blur.Freeze();
             ellipse.CacheMode = new BitmapCache();
             ellipse.Effect = blur;
+        }
+        else
+        {
+            ellipse.CacheMode = new BitmapCache();
         }
 
         return ellipse;
