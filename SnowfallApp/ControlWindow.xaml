@@ -61,6 +61,12 @@
             <Slider Minimum="0.4" Maximum="2.5" Width="220" Value="{Binding LargeSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="{Binding LargeSpeed, StringFormat=F1}" Margin="8 0 0 0" Width="40" HorizontalAlignment="Right"/>
         </StackPanel>
+
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 16 0 16">
+            <Button Content="Start" Width="100" Margin="0 0 12 0" Click="OnStartClick"/>
+            <Button Content="Pause" Width="100" Margin="0 0 12 0" Click="OnPauseClick"/>
+            <Button Content="Stop" Width="100" Click="OnStopClick"/>
+        </StackPanel>
         <TextBlock Text="Double click on the snowflakes to toggle fullscreen mode" Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
 
     </Grid>

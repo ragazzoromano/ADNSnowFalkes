@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     private readonly SnowfallSettings _settings;
     private readonly List<Snowflake> _flakes = new();
     private DateTime _lastUpdate = DateTime.Now;
+    private bool _isAnimating;
     private bool _isFullscreen;
 
     public MainWindow(SnowfallSettings settings)
@@ -28,7 +29,46 @@ public partial class MainWindow : Window
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         RefreshFlakes(initial: true);
+        StartAnimation();
+    }
+
+    public void StartAnimation()
+    {
+        if (_isAnimating)
+        {
+            return;
+        }
+
+        if (_flakes.Count == 0)
+        {
+            RefreshFlakes(initial: true);
+        }
+
+        _lastUpdate = DateTime.Now;
         CompositionTarget.Rendering += OnRendering;
+        _isAnimating = true;
+    }
+
+    public void PauseAnimation()
+    {
+        if (!_isAnimating)
+        {
+            return;
+        }
+
+        CompositionTarget.Rendering -= OnRendering;
+        _isAnimating = false;
+    }
+
+    public void StopAnimation()
+    {
+        if (_flakes.Count > 0)
+        {
+            SnowCanvas.Children.Clear();
+            _flakes.Clear();
+        }
+
+        PauseAnimation();
     }
 
     private void OnRendering(object? sender, EventArgs e)
