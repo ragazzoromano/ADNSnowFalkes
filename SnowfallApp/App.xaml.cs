@@ -9,7 +9,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var settings = new SnowfallSettings();
+        var settings = SettingsStorage.Load();
+        settings.PropertyChanged += (_, __) => SettingsStorage.Save(settings);
         var mainWindow = new MainWindow(settings);
         MainWindow = mainWindow;
         mainWindow.Show();
