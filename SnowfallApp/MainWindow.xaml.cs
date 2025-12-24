@@ -28,7 +28,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        // Force hardware acceleration for better GPU utilization
+        // Enable hardware acceleration for better GPU utilization
+        // RenderMode.Default allows WPF to use hardware acceleration when available
         RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.Default;
         
         _settings = settings;

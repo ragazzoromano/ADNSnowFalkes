@@ -400,7 +400,7 @@ public static class SnowflakeFactory
         var path = new Path
         {
             Data = selectedGeometry,
-            SnapsToDevicePixels = true,
+            SnapsToDevicePixels = false,  // Let GPU handle pixel snapping for better performance
             RenderTransform = flake.Transform,
             Stroke = flake.Brush,
             StrokeThickness = flake.StrokeThickness,
