@@ -30,5 +30,8 @@ public class Snowflake
     public double Rotation { get; set; }
     public double StrokeThickness { get; init; } = 1.0;
     public TransformGroup Transform { get; init; } = new();
+    public RotateTransform RotateTransform { get; init; } = new();
+    public TranslateTransform TranslateTransform { get; init; } = new();
+    public ScaleTransform ScaleTransform { get; init; } = new();
     public Path? Visual { get; set; }
 }

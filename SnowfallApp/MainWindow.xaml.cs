@@ -294,6 +294,11 @@ public partial class MainWindow : Window
         flake.Radius = flake.BaseRadius * sizeScale;
         flake.BlurRadius = flake.IsBokeh ? flake.BaseBlurRadius * blurIntensity : flake.BaseBlurRadius;
 
+        // Update the cached ScaleTransform when radius changes
+        var scale = flake.Radius / 10.0;
+        flake.ScaleTransform.ScaleX = scale;
+        flake.ScaleTransform.ScaleY = scale;
+
         SnowflakeFactory.ApplyVisualProperties(flake);
         UpdateVisual(flake);
     }
@@ -312,10 +317,10 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Update the transform group with rotation and translation
-        flake.Transform.Children.Clear();
-        flake.Transform.Children.Add(new RotateTransform(flake.Rotation));
-        flake.Transform.Children.Add(new TranslateTransform(flake.X - flake.Radius, flake.Y - flake.Radius));
+        // Update the existing transform objects instead of creating new ones
+        flake.RotateTransform.Angle = flake.Rotation;
+        flake.TranslateTransform.X = flake.X - flake.Radius;
+        flake.TranslateTransform.Y = flake.Y - flake.Radius;
     }
 
     private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

@@ -306,11 +306,21 @@ public static class SnowflakeFactory
         var opacity = isBokeh ? 0.25 + (Random.NextDouble() * 0.35) : 0.6 + (Random.NextDouble() * 0.35);
         var rotationSpeed = ((Random.NextDouble() * 60) - 30) * rotationSpeedMultiplier; // -30 to +30 degrees per second, scaled
 
+        var radius = baseRadius * sizeScale;
+        var scale = radius / 10.0; // Base geometry is designed with radius 10
+        
+        var rotateTransform = new RotateTransform(Random.NextDouble() * 360);
+        var translateTransform = new TranslateTransform();
+        var scaleTransform = new ScaleTransform(scale, scale);
+        var transformGroup = new TransformGroup();
+        transformGroup.Children.Add(rotateTransform);
+        transformGroup.Children.Add(translateTransform);
+
         return new Snowflake
         {
             SizeCategory = size,
             BaseRadius = baseRadius,
-            Radius = baseRadius * sizeScale,
+            Radius = radius,
             Drift = 15 + (Random.NextDouble() * 28),
             Phase = Random.NextDouble() * Math.PI * 2,
             SpeedFactor = speedFactor,
@@ -324,7 +334,11 @@ public static class SnowflakeFactory
             Brush = SnowBrush,
             RotationSpeed = rotationSpeed,
             Rotation = Random.NextDouble() * 360, // Random initial rotation
-            StrokeThickness = strokeThickness
+            StrokeThickness = strokeThickness,
+            Transform = transformGroup,
+            RotateTransform = rotateTransform,
+            TranslateTransform = translateTransform,
+            ScaleTransform = scaleTransform
         };
     }
 
@@ -371,11 +385,8 @@ public static class SnowflakeFactory
 
     private static void ApplyVisualProperties(Snowflake flake, Path path)
     {
-        // Scale the path based on the snowflake radius
-        // The base geometry is designed with radius 10, so we scale accordingly
-        var scale = flake.Radius / 10.0;
-        
-        path.LayoutTransform = new ScaleTransform(scale, scale);
+        // Use the cached ScaleTransform for the path's LayoutTransform
+        path.LayoutTransform = flake.ScaleTransform;
         path.Stroke = flake.Brush;
         path.StrokeThickness = flake.StrokeThickness;
         path.Opacity = flake.Opacity;
