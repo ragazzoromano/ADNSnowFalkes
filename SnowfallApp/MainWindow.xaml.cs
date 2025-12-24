@@ -107,6 +107,7 @@ public partial class MainWindow : Window
             var drift = Math.Sin(flake.Phase + (flake.Y * 0.015)) * flake.Drift * deltaSeconds;
             flake.X += drift;
             flake.Y += flake.Speed * deltaSeconds;
+            flake.Rotation += flake.RotationSpeed * deltaSeconds;
 
             WrapFlake(flake, width, height);
             UpdateVisual(flake);
@@ -216,7 +217,9 @@ public partial class MainWindow : Window
                     BaseSpeedFor(size, _settings),
                     sizeScale,
                     shouldBlur,
-                    blurIntensity);
+                    blurIntensity,
+                    _settings.RotationSpeed,
+                    _settings.StrokeThickness);
 
                 _flakes.Add(flake);
                 sizeFlakes.Add(flake);
@@ -225,7 +228,7 @@ public partial class MainWindow : Window
                     blurredCount++;
                 }
 
-                flake.Visual = SnowflakeFactory.CreateVisual(flake);
+                flake.Visual = SnowflakeFactory.CreateVisual(flake, _settings.SnowflakeShape);
                 SnowCanvas.Children.Add(flake.Visual);
                 UpdateVisual(flake);
             }
@@ -291,6 +294,11 @@ public partial class MainWindow : Window
         flake.Radius = flake.BaseRadius * sizeScale;
         flake.BlurRadius = flake.IsBokeh ? flake.BaseBlurRadius * blurIntensity : flake.BaseBlurRadius;
 
+        // Update the cached ScaleTransform when radius changes
+        var scale = flake.Radius / 10.0;
+        flake.ScaleTransform.ScaleX = scale;
+        flake.ScaleTransform.ScaleY = scale;
+
         SnowflakeFactory.ApplyVisualProperties(flake);
         UpdateVisual(flake);
     }
@@ -309,8 +317,11 @@ public partial class MainWindow : Window
             return;
         }
 
-        flake.Transform.X = flake.X - flake.Radius;
-        flake.Transform.Y = flake.Y - flake.Radius;
+        // Update the existing transform objects instead of creating new ones
+        // Order in TransformGroup is: Scale, Rotate, Translate
+        flake.RotateTransform.Angle = flake.Rotation;
+        flake.TranslateTransform.X = flake.X;
+        flake.TranslateTransform.Y = flake.Y;
     }
 
     private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

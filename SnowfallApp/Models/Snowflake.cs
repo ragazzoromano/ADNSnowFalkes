@@ -26,6 +26,12 @@ public class Snowflake
     public double Opacity { get; set; }
     public bool IsBokeh { get; set; }
     public Brush Brush { get; init; } = Brushes.White;
-    public TranslateTransform Transform { get; init; } = new();
-    public Ellipse? Visual { get; set; }
+    public double RotationSpeed { get; init; }
+    public double Rotation { get; set; }
+    public double StrokeThickness { get; init; } = 1.0;
+    public TransformGroup Transform { get; init; } = new();
+    public RotateTransform RotateTransform { get; init; } = new();
+    public TranslateTransform TranslateTransform { get; init; } = new();
+    public ScaleTransform ScaleTransform { get; init; } = new();
+    public Path? Visual { get; set; }
 }
