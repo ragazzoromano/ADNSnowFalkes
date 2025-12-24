@@ -27,7 +27,8 @@ public static class SnowflakeFactory
             CreateSnowflakeGeometry2(),
             CreateSnowflakeGeometry3(),
             CreateSnowflakeGeometry4(),
-            CreateSnowflakeGeometry5()
+            CreateSnowflakeGeometry5(),
+            CreateSnowflakeGeometry6()
         };
 
         foreach (var geometry in geometries)
@@ -277,6 +278,40 @@ public static class SnowflakeFactory
                           tipY + Math.Sin(rightAngle) * 3), true));
             geometry.Figures.Add(rightBranch);
         }
+
+        return geometry;
+    }
+
+    // Circle snowflake (simple circle shape)
+    private static PathGeometry CreateSnowflakeGeometry6()
+    {
+        var geometry = new PathGeometry();
+        var radius = 10.0;
+
+        var figure = new PathFigure
+        {
+            StartPoint = new Point(radius, 0),
+            IsClosed = true
+        };
+
+        // Create a circle using two arc segments
+        figure.Segments.Add(new ArcSegment(
+            new Point(-radius, 0), 
+            new Size(radius, radius), 
+            0, 
+            false, 
+            SweepDirection.Clockwise, 
+            true));
+        
+        figure.Segments.Add(new ArcSegment(
+            new Point(radius, 0), 
+            new Size(radius, radius), 
+            0, 
+            false, 
+            SweepDirection.Clockwise, 
+            true));
+
+        geometry.Figures.Add(figure);
 
         return geometry;
     }
