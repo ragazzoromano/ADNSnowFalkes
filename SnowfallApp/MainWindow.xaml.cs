@@ -15,8 +15,10 @@ public partial class MainWindow : Window
     private readonly SnowfallSettings _settings;
     private readonly List<Snowflake> _flakes = new();
     private DateTime _lastUpdate = DateTime.Now;
+    private DateTime _lastFrameTime = DateTime.Now;
     private bool _isAnimating;
     private bool _isFullscreen;
+    private const double TargetFrameTime = 1.0 / 60.0; // Target 60 FPS
 
     public event EventHandler? AnimationStateChanged;
     public bool IsAnimating => _isAnimating;
@@ -25,6 +27,10 @@ public partial class MainWindow : Window
     public MainWindow(SnowfallSettings settings)
     {
         InitializeComponent();
+        
+        // Force hardware acceleration for better GPU utilization
+        RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.Default;
+        
         _settings = settings;
         _settings.PropertyChanged += (_, __) => RefreshFlakes();
         Loaded += OnLoaded;
@@ -54,6 +60,7 @@ public partial class MainWindow : Window
         }
 
         _lastUpdate = DateTime.Now;
+        _lastFrameTime = DateTime.Now;
         CompositionTarget.Rendering += OnRendering;
         _isAnimating = true;
         NotifyAnimationStateChanged();
@@ -86,6 +93,15 @@ public partial class MainWindow : Window
     private void OnRendering(object? sender, EventArgs e)
     {
         var now = DateTime.Now;
+        
+        // Frame rate throttling - skip frames if rendering too fast
+        var timeSinceLastFrame = (now - _lastFrameTime).TotalSeconds;
+        if (timeSinceLastFrame < TargetFrameTime)
+        {
+            return;
+        }
+        _lastFrameTime = now;
+        
         var deltaSeconds = (now - _lastUpdate).TotalSeconds;
         _lastUpdate = now;
 

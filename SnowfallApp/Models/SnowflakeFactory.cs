@@ -434,12 +434,27 @@ public static class SnowflakeFactory
         {
             var blur = new BlurEffect { Radius = flake.BlurRadius, RenderingBias = RenderingBias.Performance };
             blur.Freeze();
-            path.CacheMode = new BitmapCache();
+            
+            // Optimize BitmapCache for GPU acceleration
+            var cache = new BitmapCache
+            {
+                EnableClearType = false,  // Better for GPU rendering
+                RenderAtScale = 1.0,       // Optimal scale for caching
+                SnapsToDevicePixels = false // Let GPU handle pixel snapping
+            };
+            path.CacheMode = cache;
             path.Effect = blur;
         }
         else
         {
-            path.CacheMode = new BitmapCache();
+            // Optimize BitmapCache for non-blurred snowflakes
+            var cache = new BitmapCache
+            {
+                EnableClearType = false,
+                RenderAtScale = 1.0,
+                SnapsToDevicePixels = false
+            };
+            path.CacheMode = cache;
             path.Effect = null;
         }
     }
