@@ -403,7 +403,8 @@ public static class SnowflakeFactory
             SnapsToDevicePixels = true,
             RenderTransform = flake.Transform,
             Stroke = flake.Brush,
-            StrokeThickness = flake.StrokeThickness
+            StrokeThickness = flake.StrokeThickness,
+            Fill = flake.Brush
         };
 
         ApplyVisualProperties(flake, path);
@@ -426,6 +427,7 @@ public static class SnowflakeFactory
         // All transforms are handled through RenderTransform (TransformGroup)
         path.Stroke = flake.Brush;
         path.StrokeThickness = flake.StrokeThickness;
+        path.Fill = flake.Brush;
         path.Opacity = flake.Opacity;
 
         if (flake.IsBokeh && flake.BlurRadius > 0.2)
