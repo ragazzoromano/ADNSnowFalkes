@@ -24,6 +24,10 @@ public class SnowfallSettings : INotifyPropertyChanged
 
     private double _blurIntensity = 1.0;
 
+    private int _snowflakeShape = 0; // 0 = Random, 1-5 = specific shapes
+    private double _rotationSpeed = 1.0; // Multiplier for rotation speed
+    private double _strokeThickness = 1.0; // Line thickness for snowflakes
+
     public int SmallCount
     {
         get => _smallCount;
@@ -118,6 +122,24 @@ public class SnowfallSettings : INotifyPropertyChanged
     {
         get => _blurIntensity;
         set => SetField(ref _blurIntensity, value);
+    }
+
+    public int SnowflakeShape
+    {
+        get => _snowflakeShape;
+        set => SetField(ref _snowflakeShape, value);
+    }
+
+    public double RotationSpeed
+    {
+        get => _rotationSpeed;
+        set => SetField(ref _rotationSpeed, value);
+    }
+
+    public double StrokeThickness
+    {
+        get => _strokeThickness;
+        set => SetField(ref _strokeThickness, value);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -217,7 +217,9 @@ public partial class MainWindow : Window
                     BaseSpeedFor(size, _settings),
                     sizeScale,
                     shouldBlur,
-                    blurIntensity);
+                    blurIntensity,
+                    _settings.RotationSpeed,
+                    _settings.StrokeThickness);
 
                 _flakes.Add(flake);
                 sizeFlakes.Add(flake);
@@ -226,7 +228,7 @@ public partial class MainWindow : Window
                     blurredCount++;
                 }
 
-                flake.Visual = SnowflakeFactory.CreateVisual(flake);
+                flake.Visual = SnowflakeFactory.CreateVisual(flake, _settings.SnowflakeShape);
                 SnowCanvas.Children.Add(flake.Visual);
                 UpdateVisual(flake);
             }

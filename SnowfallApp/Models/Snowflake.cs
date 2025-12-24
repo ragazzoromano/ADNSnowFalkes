@@ -28,6 +28,7 @@ public class Snowflake
     public Brush Brush { get; init; } = Brushes.White;
     public double RotationSpeed { get; init; }
     public double Rotation { get; set; }
+    public double StrokeThickness { get; init; } = 1.0;
     public TransformGroup Transform { get; init; } = new();
     public Path? Visual { get; set; }
 }

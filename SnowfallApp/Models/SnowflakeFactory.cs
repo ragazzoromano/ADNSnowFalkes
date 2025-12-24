@@ -289,7 +289,9 @@ public static class SnowflakeFactory
         double baseSpeed,
         double sizeScale,
         bool isBokeh,
-        double blurIntensity)
+        double blurIntensity,
+        double rotationSpeedMultiplier,
+        double strokeThickness)
     {
         var (radiusMin, radiusMax) = size switch
         {
@@ -302,7 +304,7 @@ public static class SnowflakeFactory
         var baseRadius = radiusMin + (Random.NextDouble() * (radiusMax - radiusMin));
         var baseBlurRadius = isBokeh ? 2 + (Random.NextDouble() * 6) : Random.NextDouble() * 0.5;
         var opacity = isBokeh ? 0.25 + (Random.NextDouble() * 0.35) : 0.6 + (Random.NextDouble() * 0.35);
-        var rotationSpeed = (Random.NextDouble() * 60) - 30; // -30 to +30 degrees per second
+        var rotationSpeed = ((Random.NextDouble() * 60) - 30) * rotationSpeedMultiplier; // -30 to +30 degrees per second, scaled
 
         return new Snowflake
         {
@@ -321,14 +323,25 @@ public static class SnowflakeFactory
             Y = initial ? Random.NextDouble() * Math.Max(1, height) : -radiusMax,
             Brush = SnowBrush,
             RotationSpeed = rotationSpeed,
-            Rotation = Random.NextDouble() * 360 // Random initial rotation
+            Rotation = Random.NextDouble() * 360, // Random initial rotation
+            StrokeThickness = strokeThickness
         };
     }
 
-    public static Path CreateVisual(Snowflake flake)
+    public static Path CreateVisual(Snowflake flake, int shapeIndex)
     {
-        // Randomly select a snowflake geometry
-        var geometryIndex = Random.Next(SnowflakeGeometries.Count);
+        // Select snowflake geometry based on shape index
+        // 0 = Random, 1-5 = specific shapes
+        int geometryIndex;
+        if (shapeIndex == 0)
+        {
+            geometryIndex = Random.Next(SnowflakeGeometries.Count);
+        }
+        else
+        {
+            geometryIndex = Math.Max(0, Math.Min(shapeIndex - 1, SnowflakeGeometries.Count - 1));
+        }
+
         var selectedGeometry = SnowflakeGeometries[geometryIndex];
 
         var path = new Path
@@ -338,7 +351,7 @@ public static class SnowflakeFactory
             RenderTransform = flake.Transform,
             RenderTransformOrigin = new Point(0.5, 0.5),
             Stroke = flake.Brush,
-            StrokeThickness = 1
+            StrokeThickness = flake.StrokeThickness
         };
 
         ApplyVisualProperties(flake, path);
@@ -364,6 +377,7 @@ public static class SnowflakeFactory
         
         path.LayoutTransform = new ScaleTransform(scale, scale);
         path.Stroke = flake.Brush;
+        path.StrokeThickness = flake.StrokeThickness;
         path.Opacity = flake.Opacity;
 
         if (flake.IsBokeh && flake.BlurRadius > 0.2)
