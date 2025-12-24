@@ -403,7 +403,8 @@ public static class SnowflakeFactory
             SnapsToDevicePixels = true,
             RenderTransform = flake.Transform,
             Stroke = flake.Brush,
-            StrokeThickness = flake.StrokeThickness
+            StrokeThickness = flake.StrokeThickness,
+            Fill = flake.Brush
         };
 
         ApplyVisualProperties(flake, path);
