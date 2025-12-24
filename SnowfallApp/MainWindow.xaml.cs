@@ -107,6 +107,7 @@ public partial class MainWindow : Window
             var drift = Math.Sin(flake.Phase + (flake.Y * 0.015)) * flake.Drift * deltaSeconds;
             flake.X += drift;
             flake.Y += flake.Speed * deltaSeconds;
+            flake.Rotation += flake.RotationSpeed * deltaSeconds;
 
             WrapFlake(flake, width, height);
             UpdateVisual(flake);
@@ -309,8 +310,10 @@ public partial class MainWindow : Window
             return;
         }
 
-        flake.Transform.X = flake.X - flake.Radius;
-        flake.Transform.Y = flake.Y - flake.Radius;
+        // Update the transform group with rotation and translation
+        flake.Transform.Children.Clear();
+        flake.Transform.Children.Add(new RotateTransform(flake.Rotation));
+        flake.Transform.Children.Add(new TranslateTransform(flake.X - flake.Radius, flake.Y - flake.Radius));
     }
 
     private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
