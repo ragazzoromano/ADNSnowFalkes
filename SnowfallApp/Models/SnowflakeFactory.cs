@@ -384,7 +384,7 @@ public static class SnowflakeFactory
     public static Path CreateVisual(Snowflake flake, int shapeIndex)
     {
         // Select snowflake geometry based on shape index
-        // 0 = Random, 1-5 = specific shapes
+        // 0 = Random, 1-6 = specific shapes
         int geometryIndex;
         if (shapeIndex == 0)
         {
