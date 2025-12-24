@@ -318,9 +318,10 @@ public partial class MainWindow : Window
         }
 
         // Update the existing transform objects instead of creating new ones
+        // Order in TransformGroup is: Scale, Rotate, Translate
         flake.RotateTransform.Angle = flake.Rotation;
-        flake.TranslateTransform.X = flake.X - flake.Radius;
-        flake.TranslateTransform.Y = flake.Y - flake.Radius;
+        flake.TranslateTransform.X = flake.X;
+        flake.TranslateTransform.Y = flake.Y;
     }
 
     private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

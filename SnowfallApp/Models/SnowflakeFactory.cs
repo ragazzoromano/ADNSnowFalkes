@@ -304,15 +304,19 @@ public static class SnowflakeFactory
         var baseRadius = radiusMin + (Random.NextDouble() * (radiusMax - radiusMin));
         var baseBlurRadius = isBokeh ? 2 + (Random.NextDouble() * 6) : Random.NextDouble() * 0.5;
         var opacity = isBokeh ? 0.25 + (Random.NextDouble() * 0.35) : 0.6 + (Random.NextDouble() * 0.35);
-        var rotationSpeed = ((Random.NextDouble() * 60) - 30) * rotationSpeedMultiplier; // -30 to +30 degrees per second, scaled
+        
+        const double MaxRotationSpeedRange = 60.0;
+        const double RotationSpeedOffset = 30.0;
+        var rotationSpeed = ((Random.NextDouble() * MaxRotationSpeedRange) - RotationSpeedOffset) * rotationSpeedMultiplier;
 
         var radius = baseRadius * sizeScale;
         var scale = radius / 10.0; // Base geometry is designed with radius 10
         
+        var scaleTransform = new ScaleTransform(scale, scale);
         var rotateTransform = new RotateTransform(Random.NextDouble() * 360);
         var translateTransform = new TranslateTransform();
-        var scaleTransform = new ScaleTransform(scale, scale);
         var transformGroup = new TransformGroup();
+        transformGroup.Children.Add(scaleTransform);
         transformGroup.Children.Add(rotateTransform);
         transformGroup.Children.Add(translateTransform);
 
@@ -363,7 +367,6 @@ public static class SnowflakeFactory
             Data = selectedGeometry,
             SnapsToDevicePixels = true,
             RenderTransform = flake.Transform,
-            RenderTransformOrigin = new Point(0.5, 0.5),
             Stroke = flake.Brush,
             StrokeThickness = flake.StrokeThickness
         };
@@ -385,8 +388,7 @@ public static class SnowflakeFactory
 
     private static void ApplyVisualProperties(Snowflake flake, Path path)
     {
-        // Use the cached ScaleTransform for the path's LayoutTransform
-        path.LayoutTransform = flake.ScaleTransform;
+        // All transforms are handled through RenderTransform (TransformGroup)
         path.Stroke = flake.Brush;
         path.StrokeThickness = flake.StrokeThickness;
         path.Opacity = flake.Opacity;
