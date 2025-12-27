@@ -1,0 +1,11 @@
+<Window x:Class="SnowfallServer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Snowfall" Height="720" Width="1280"
+        WindowStartupLocation="CenterScreen"
+        Background="Black"
+        MouseDoubleClick="OnMouseDoubleClick">
+    <Grid Background="Black">
+        <Canvas x:Name="SnowCanvas" SnapsToDevicePixels="True"/>
+    </Grid>
+</Window>
