@@ -24,7 +24,7 @@ public class SnowfallSettings : INotifyPropertyChanged
 
     private double _blurIntensity = 1.0;
 
-    private int _snowflakeShape = 0; // 0 = Random, 1-5 = specific shapes
+    private int _snowflakeShape = 0; // 0 = Random, 1-6 = specific shapes
     private double _rotationSpeed = 1.0; // Multiplier for rotation speed
     private double _strokeThickness = 1.0; // Line thickness for snowflakes
 

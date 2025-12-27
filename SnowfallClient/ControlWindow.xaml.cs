@@ -72,7 +72,7 @@ public partial class ControlWindow : Window
 
         _isConnected = false;
         _writer?.Dispose();
-        _client?.Close();
+        _client?.Dispose();
         _writer = null;
         _client = null;
 

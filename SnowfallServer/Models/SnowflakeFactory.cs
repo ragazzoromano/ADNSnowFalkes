@@ -392,7 +392,7 @@ public static class SnowflakeFactory
         }
         else
         {
-            geometryIndex = Math.Max(0, Math.Min(shapeIndex - 1, SnowflakeGeometries.Count - 1));
+            geometryIndex = Math.Clamp(shapeIndex - 1, 0, SnowflakeGeometries.Count - 1);
         }
 
         var selectedGeometry = SnowflakeGeometries[geometryIndex];

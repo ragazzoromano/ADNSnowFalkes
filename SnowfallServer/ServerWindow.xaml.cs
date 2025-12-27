@@ -84,6 +84,8 @@ public partial class ServerWindow : Window
 
         _isServerRunning = false;
         _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
+        _cancellationTokenSource = null;
         _listener?.Stop();
 
         Dispatcher.Invoke(() =>
@@ -102,7 +104,7 @@ public partial class ServerWindow : Window
         {
             try
             {
-                var client = await _listener.AcceptTcpClientAsync(cancellationToken);
+                var client = await _listener.AcceptTcpClientAsync();
                 _ = Task.Run(() => HandleClientAsync(client, cancellationToken), cancellationToken);
             }
             catch (OperationCanceledException)
@@ -129,7 +131,7 @@ public partial class ServerWindow : Window
             {
                 while (!cancellationToken.IsCancellationRequested && client.Connected)
                 {
-                    var line = await reader.ReadLineAsync(cancellationToken);
+                    var line = await reader.ReadLineAsync();
                     if (line == null) break;
 
                     ProcessCommand(line, clientEndPoint);
